@@ -1,7 +1,17 @@
 package com.bridgelab.addressbooksystemusingcollections;
 
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.CsvToBean;
+import com.opencsv.bean.CsvToBeanBuilder;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -21,6 +31,10 @@ public class AddressBookService
 {
     public enum IOService {CONSOLE_IO, FILE_IO, DB_IO, REST_IO}
     public static String addressBookFile = "AddressBookFile.txt";
+
+    //public static final String FILE_PATH="C:\\Users\\\\Desktop";
+    public static final String FILE_PATH = "C:\\Users\\mihir\\IdeaProjects\\AddressBookRefactored\\src\\Resources";
+    public static final String CSV_FILE = "/AddressBook.csv";
 
     //To scan the input.
     Scanner scanner;
@@ -377,6 +391,82 @@ public class AddressBookService
                     .collect(Collectors.toList())
                     .forEach(person -> System.out.println(person.toString()));
         });
+    }
+
+    /**
+     * Name : writeToCsv
+     *
+     * Description : Person details storing inside csv file.
+     * nothing but writing to csv file.
+     *
+     * Modification : First commit 26-July-2021
+     */
+    public void writeToCsv()
+    {
+        try
+        {
+            Writer writer = Files.newBufferedWriter(Paths.get(FILE_PATH+CSV_FILE));
+            StatefulBeanToCsv<PersonDetails> beanToCsv = new StatefulBeanToCsvBuilder<PersonDetails>(writer)
+                    .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
+                    .build();
+            List<PersonDetails> ContactList = new ArrayList<>();
+            addressBook.entrySet().stream()
+                    .map(books->books.getKey())
+                    .map(bookNames->{
+                        return addressBook.get(bookNames);
+                    }).forEach(contacts ->{
+                ContactList.addAll(contacts);
+            });
+            beanToCsv.write(ContactList);
+            writer.close();
+        }
+        catch (CsvDataTypeMismatchException e)
+        {
+            e.printStackTrace();
+        }
+        catch (CsvRequiredFieldEmptyException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Name : readFromCsvFile
+     *
+     * Description : Reading data from csv file.
+     *
+     * Modification : First commit 26-July-2021
+     */
+    public void readFromCsvFile()
+    {
+        Reader reader;
+        try {
+            reader = Files.newBufferedReader(Paths.get(FILE_PATH+CSV_FILE));
+            CsvToBean<PersonDetails> csvToBean = new CsvToBeanBuilder(reader)
+                    .withType(PersonDetails.class)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+            List<PersonDetails> contacts = csvToBean.parse();
+
+            for(PersonDetails contact: contacts) {
+                System.out.println("Name : " + contact.getFirstName()+" "+contact.getLastName());
+                System.out.println("Email : " + contact.getEmailId());
+                System.out.println("PhoneNo : " + contact.getPhoneNumber());
+                System.out.println("Address : " + contact.getAddress());
+                System.out.println("State : " + contact.getState());
+                System.out.println("City : " + contact.getCity());
+                System.out.println("Zip : " + contact.getZipCode());
+                System.out.println("==========================");
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 
     /**
