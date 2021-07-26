@@ -1,5 +1,6 @@
 package com.bridgelab.addressbooksystemusingcollections;
 
+import com.google.gson.Gson;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
@@ -8,10 +9,7 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import com.opencsv.exceptions.CsvDataTypeMismatchException;
 import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -32,9 +30,10 @@ public class AddressBookService
     public enum IOService {CONSOLE_IO, FILE_IO, DB_IO, REST_IO}
     public static String addressBookFile = "AddressBookFile.txt";
 
-    //public static final String FILE_PATH="C:\\Users\\\\Desktop";
     public static final String FILE_PATH = "C:\\Users\\mihir\\IdeaProjects\\AddressBookRefactored\\src\\Resources";
     public static final String CSV_FILE = "/AddressBook.csv";
+
+    public static final String JSON_FILE="/AddressBook.json";
 
     //To scan the input.
     Scanner scanner;
@@ -467,6 +466,82 @@ public class AddressBookService
         {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Name : writeToJson
+     *
+     * Description : Writing data to json file.
+     *
+     * Modification : First commit 26-July-2021
+     */
+    public void writeToJson()
+    {
+        List<PersonDetails> contacts = getContentOfCsv();
+        Gson gson = new Gson();
+        String json = gson.toJson(contacts);
+        try
+        {
+            FileWriter writer = new FileWriter(FILE_PATH+JSON_FILE);
+            writer.write(json);
+            writer.close();
+            System.out.println("Written sucessfully");
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Name : readFromJson
+     *
+     * Description : Reading data from.
+     *
+     * Modification : First commit 26-July-2021
+     */
+    public void readFromJson()
+    {
+        try
+        {
+            Gson gson = new Gson();
+            BufferedReader br = new BufferedReader(new FileReader(FILE_PATH+JSON_FILE));
+            PersonDetails[] contacts = gson.fromJson(br,PersonDetails[].class);
+            List<PersonDetails> contactsList = Arrays.asList(contacts);
+            for(PersonDetails contact: contactsList) {
+                System.out.println("Name : " + contact.getFirstName()+" "+contact.getLastName());
+                System.out.println("Email : " + contact.getEmailId());
+                System.out.println("PhoneNo : " + contact.getPhoneNumber());
+                System.out.println("Address : " + contact.getAddress());
+                System.out.println("State : " + contact.getState());
+                System.out.println("City : " + contact.getCity());
+                System.out.println("Zip : " + contact.getZipCode());
+                System.out.println("==========================");
+            }
+        }
+        catch (FileNotFoundException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    private List<PersonDetails> getContentOfCsv()
+    {
+        try
+        {
+            Reader reader = Files.newBufferedReader(Paths.get(FILE_PATH+CSV_FILE));
+            CsvToBean<PersonDetails> csvToBean = new CsvToBeanBuilder<PersonDetails>(reader)
+                    .withType(PersonDetails.class)
+                    .withIgnoreLeadingWhiteSpace(true)
+                    .build();
+            return csvToBean.parse();
+
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     /**
