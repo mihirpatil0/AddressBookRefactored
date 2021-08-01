@@ -556,20 +556,27 @@ public class AddressBookService
         String jdbcURL = "jdbc:mysql://localhost:3306/addressbook_service?useSSL=false";
         String username = "root";
         String password = "Mihir@08";
-        System.out.println("Conecting to database"+jdbcURL);
+        System.out.println("Connecting to database"+jdbcURL);
         Connection connection = null;
         connection = DriverManager.getConnection(jdbcURL,username,password);
-        System.out.println("Connection sucessful" + connection);
+        System.out.println("Connection successful" + connection);
         return connection;
     }
 
     /**
-     * Reading data from datbase.
+     * Reading data from database.
      * @return
      */
     public List<PersonDetails> readFromDataBase()
     {
         String query = "select * from address_book;";
+        contactListDB = getQueryResult(query);
+        return contactListDB;
+    }
+
+    private List<PersonDetails> getQueryResult(String query)
+    {
+        List<PersonDetails> contacts = new ArrayList<>();
         try(Connection connection = this.getConnection())
         {
             Statement statement = connection.createStatement();
@@ -585,15 +592,52 @@ public class AddressBookService
                 String zip= resultSet.getString("Zip");
                 int phoneNumber= resultSet.getInt("Phone");
                 String email = resultSet.getString("Email");
-                contactListDB.add(new PersonDetails(id,firstName, lastname, address, city, state, zip, phoneNumber, email));
+                contacts.add(new PersonDetails(id,firstName, lastname, address, city, state, zip, phoneNumber, email));
             }
         }
         catch (Exception e)
         {
             e.printStackTrace();
         }
-        return contactListDB;
+        return contacts;
     }
+
+    public void updateContactInDataBase(String name,int phoneNumber)
+    {
+        String sql = "update address_book set Phone = "+phoneNumber+" where FirstName = '"+name+"';";
+        try(Connection connection = this.getConnection())
+        {
+            Statement statement = connection.createStatement();
+            int rowChanged = statement.executeUpdate(sql);
+            if (rowChanged == 1)
+            {
+                PersonDetails contact = getContactFormList(name);
+                contact.setPhoneNumber(phoneNumber);
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean checkSyncWithDB(String name)
+    {
+        return getContactFromDatabase(name).get(0).equals(getContactFormList(name));
+    }
+
+    private List<PersonDetails> getContactFromDatabase(String name)
+    {
+        String sql = "select * from address_book where first = '"+name+"'; ";
+        return getQueryResult(sql);
+    }
+
+    //search a particular contact in list
+    private PersonDetails getContactFormList(String name)
+    {
+        return contactListDB.stream().filter(contacts->contacts.getFirstName().equals(name)).findFirst().orElse(null);
+    }
+
 
     /**
      * Name : displayContacts

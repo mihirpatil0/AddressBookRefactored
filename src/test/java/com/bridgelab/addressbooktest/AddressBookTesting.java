@@ -16,4 +16,13 @@ public class AddressBookTesting
         List<PersonDetails> contactList  = addressBookService.readFromDataBase();
         Assertions.assertEquals(4, contactList.size());
     }
+
+    @Test
+    public void givenUpadteEmployeeData_WhenUpdated_shouldSyncWithDatabase()
+    {
+        AddressBookService addressBookService = new AddressBookService();
+        addressBookService.readFromDataBase();
+        addressBookService.updateContactInDataBase("Mihir",900000);
+        Assertions.assertTrue(addressBookService.checkSyncWithDB("Mihir"));
+    }
 }
