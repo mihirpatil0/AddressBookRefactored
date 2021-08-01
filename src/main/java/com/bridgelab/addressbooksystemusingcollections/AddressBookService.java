@@ -644,6 +644,26 @@ public class AddressBookService
         return getQueryResult(query);
     }
 
+    public HashMap<String, Integer> getContactHaveSameCity()
+    {
+        HashMap<String, Integer> matches = new HashMap<String, Integer>();
+        try(Connection connection = this.getConnection())
+        {
+            String sql = " select City,count(City) from address_book group by City; ";
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next())
+            {
+                matches.put(resultSet.getString(1),resultSet.getInt(2));
+            }
+        }
+        catch(SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return matches;
+    }
+
     /**
      * Name : displayContacts
      *

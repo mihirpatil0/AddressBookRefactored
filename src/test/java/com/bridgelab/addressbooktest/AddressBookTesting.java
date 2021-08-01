@@ -5,6 +5,7 @@ import com.bridgelab.addressbooksystemusingcollections.PersonDetails;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
 
 public class AddressBookTesting
@@ -32,5 +33,13 @@ public class AddressBookTesting
         AddressBookService addressBookService = new AddressBookService();
         List<PersonDetails> contactList  = addressBookService.getContatctsAddedAfterdate("2020-1-1");
         Assertions.assertEquals(4, contactList.size());
+    }
+
+    @Test
+    public void givenAddressbookDB_WhenInSameCity_ShouldReturnNumberOfContacts()
+    {
+        AddressBookService addressBookService = new AddressBookService();
+        HashMap<String, Integer> sameCity = addressBookService.getContactHaveSameCity();
+        Assertions.assertEquals(3, sameCity.size());
     }
 }

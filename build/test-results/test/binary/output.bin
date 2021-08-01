@@ -1,2 +1,2 @@
 TConnecting to databasejdbc:mysql://localhost:3306/addressbook_service?useSSL=false
-@Connection successfulcom.mysql.cj.jdbc.ConnectionImpl@7bb4277a
+@Connection successfulcom.mysql.cj.jdbc.ConnectionImpl@7ad25931
