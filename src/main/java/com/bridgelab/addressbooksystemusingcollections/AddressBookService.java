@@ -664,6 +664,70 @@ public class AddressBookService
         return matches;
     }
 
+    public void insertContactInDataBase(String first, String last, String address, String city, String state, String zip, int phoneNumber, String email, List<String> groups)
+    {
+        Connection connection = null;
+        int id = 0;
+        try
+        {
+            connection = getConnection();
+            connection.setAutoCommit(false);
+            Statement statement = connection.createStatement();
+
+            //adding data in address book
+            String query1 = "insert into address_Book (FirstName,LastName,Address,City,State,Zip,Phone,Email)"
+                    + "  values('"+first+"','"+last+"','"+address+"','"+city+"','"+state+"','"+zip+"',"+phoneNumber+",'"+email+"');";
+            int rowsChanged =  statement.executeUpdate(query1,Statement.RETURN_GENERATED_KEYS);
+            if (rowsChanged ==1 )
+            {
+                ResultSet resultSet = statement.getGeneratedKeys();
+                if (resultSet.next())
+                {
+                    id = resultSet.getInt(1);
+                }
+            }
+
+            //adding values in ab_dept table
+            for (String group : groups)
+            {
+                String query2 = " select gid from group_type where gname= '"+group+"';";
+                ResultSet resultSet = statement.executeQuery(query2);
+                if (resultSet.next())
+                {
+                    int gid  = resultSet.getInt(1);
+                    String query3 = "insert into ab_grp (id,gid) values ("+id+","+gid+");";
+                    statement.executeUpdate(query3);
+                }
+            }
+            connection.commit();
+            contactListDB.add(new PersonDetails(id, first, last, address, city, state, zip, phoneNumber, email, groups));
+            System.out.println(contactListDB);
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                connection.rollback();
+            }
+            catch (SQLException e1)
+            {
+                e1.printStackTrace();
+            }
+
+        }
+        finally
+        {
+            try
+            {
+                connection.close();
+            }
+            catch (SQLException e)
+            {
+                e.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Name : displayContacts
      *

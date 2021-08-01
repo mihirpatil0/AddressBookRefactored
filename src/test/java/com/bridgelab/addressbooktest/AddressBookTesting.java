@@ -5,6 +5,7 @@ import com.bridgelab.addressbooksystemusingcollections.PersonDetails;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,5 +42,17 @@ public class AddressBookTesting
         AddressBookService addressBookService = new AddressBookService();
         HashMap<String, Integer> sameCity = addressBookService.getContactHaveSameCity();
         Assertions.assertEquals(3, sameCity.size());
+    }
+
+    @Test
+    public void givenInsertEmployeeData_WhenInserted_shouldSyncWithDatabase()
+    {
+        AddressBookService addressBookService = new AddressBookService();
+        addressBookService.readFromDataBase();
+        List<String> groups = new ArrayList<String>();
+        groups.add("family");
+        groups.add("friend");
+        addressBookService.insertContactInDataBase("Sammer","Vaidya","Shriwardhan","Raigad","Maharashtra","402110",0000,"Vaidya@gmail.com",groups);
+        Assertions.assertTrue(addressBookService.checkSyncWithDB("rohit"));
     }
 }
