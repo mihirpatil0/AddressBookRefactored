@@ -1,0 +1,2 @@
+SConecting to databasejdbc:mysql://localhost:3306/addressbook_service?useSSL=false
+>Connection sucessfulcom.mysql.cj.jdbc.ConnectionImpl@fa27e86

@@ -21,6 +21,24 @@ public class PersonDetails
     private long phoneNumber;
     private String emailId;
 
+    public PersonDetails()
+    {
+
+    }
+
+    public PersonDetails(String firstName, String lastName, String address, String city, String state, int zipCode, long phoneNumber, String emailId) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.zipCode = zipCode;
+        this.phoneNumber = phoneNumber;
+        this.emailId = emailId;
+    }
+
+    public PersonDetails(int id, String firstName, String lastname, String address, String city, String state, String zip, int phoneNumber, String email) { }
+
     public String getFirstName() {
         return firstName;
     }

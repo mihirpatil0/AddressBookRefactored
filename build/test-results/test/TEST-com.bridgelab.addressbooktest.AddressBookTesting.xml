@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.bridgelab.addressbooktest.AddressBookTesting" tests="1" skipped="0" failures="0" errors="0" timestamp="2021-08-01T18:22:59" hostname="NARUTO" time="0.235">
+  <properties/>
+  <testcase name="givenReadFromDB_ShouldReturnListOfContacts()" classname="com.bridgelab.addressbooktest.AddressBookTesting" time="0.235"/>
+  <system-out><![CDATA[Conecting to databasejdbc:mysql://localhost:3306/addressbook_service?useSSL=false
+Connection sucessfulcom.mysql.cj.jdbc.ConnectionImpl@fa27e86
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
