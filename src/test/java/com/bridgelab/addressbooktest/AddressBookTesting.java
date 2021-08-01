@@ -25,4 +25,12 @@ public class AddressBookTesting
         addressBookService.updateContactInDataBase("Mihir",900000);
         Assertions.assertTrue(addressBookService.checkSyncWithDB("Mihir"));
     }
+
+    @Test
+    public void givenAddressbookDB_WhenBetweenDates_ShouldReturnListOfContacts()
+    {
+        AddressBookService addressBookService = new AddressBookService();
+        List<PersonDetails> contactList  = addressBookService.getContatctsAddedAfterdate("2020-1-1");
+        Assertions.assertEquals(4, contactList.size());
+    }
 }
